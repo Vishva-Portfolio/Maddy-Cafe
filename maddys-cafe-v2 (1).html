@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maddy's Café — Where Every Sip Tells a Story</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;600;700;900&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal:        #3ecfb2;
+    --teal-deep:   #1a9e88;
+    --teal-glow:   rgba(62,207,178,0.18);
+    --teal-border: rgba(62,207,178,0.28);
+    --ivory:       #f0ede6;
+    --ivory-dim:   rgba(240,237,230,0.6);
+    --ivory-faint: rgba(240,237,230,0.35);
+    --dark:        #07130f;
+    --dark2:       #0b1e19;
+    --glass:       rgba(7,19,15,0.45);
+    --glass-border:rgba(62,207,178,0.14);
+    --glass-hover: rgba(7,19,15,0.6);
+    --blur:        blur(22px);
+    --blur-heavy:  blur(36px);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    background: var(--dark);
+    color: var(--ivory);
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ─── BACKGROUND SCENE ─── */
+  .bg-scene {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  /* Actual uploaded image as base */
+  .bg-img {
+    position: absolute;
+    inset: 0;
+    background:
+      url('/mnt/user-data/uploads/1779072434286_image.png') center/cover no-repeat,
+      linear-gradient(160deg, #07130f 0%, #0b2218 40%, #071510 100%);
+    filter: brightness(0.55) saturate(1.3);
+  }
+
+  /* Tinted overlay that harmonises everything */
+  .bg-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 15%, rgba(10,55,42,0.75) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 10%, rgba(5,40,32,0.8)  0%, transparent 50%),
+      radial-gradient(ellipse at 50% 90%, rgba(7,25,18,0.6)  0%, transparent 60%),
+      radial-gradient(ellipse at 90% 65%, rgba(10,60,45,0.55) 0%, transparent 45%);
+  }
+
+  /* ── Floating orbs ── */
+  .bg-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    animation: orbFloat ease-in-out infinite;
+    mix-blend-mode: screen;
+  }
+  .orb1 { width: 480px; height: 480px; background: rgba(30,120,95,0.28);  top: -130px; left: -100px;  animation-duration: 14s; animation-delay: 0s; }
+  .orb2 { width: 340px; height: 340px; background: rgba(62,207,178,0.18); top: 25%;    right: -80px;  animation-duration: 18s; animation-delay: -5s; }
+  .orb3 { width: 560px; height: 300px; background: rgba(10,90,65,0.22);   bottom: 5%;  left: 15%;     animation-duration: 22s; animation-delay: -9s; }
+  .orb4 { width: 220px; height: 220px; background: rgba(62,207,178,0.14); top: 55%;    left: 8%;      animation-duration: 16s; animation-delay: -3s; }
+  .orb5 { width: 280px; height: 280px; background: rgba(15,100,75,0.2);   top: 40%;    right: 15%;    animation-duration: 20s; animation-delay: -12s; }
+
+  @keyframes orbFloat {
+    0%,100% { transform: translate(0,0) scale(1); }
+    25%      { transform: translate(25px,-35px) scale(1.06); }
+    50%      { transform: translate(-15px,20px) scale(0.96); }
+    75%      { transform: translate(20px,10px) scale(1.03); }
+  }
+
+  /* ── Noise grain texture ── */
+  .bg-grain {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)' opacity='0.055'/%3E%3C/svg%3E");
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  /* ── Particles ── */
+  .bg-particles {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    animation: particleRise linear infinite;
+    opacity: 0;
+  }
+
+  @keyframes particleRise {
+    0%   { transform: translateY(100vh) translateX(0);   opacity: 0; }
+    8%   { opacity: 0.7; }
+    85%  { opacity: 0.25; }
+    100% { transform: translateY(-30px) translateX(var(--drift, 20px)); opacity: 0; }
+  }
+
+  /* ─── GLASS UTILITY ─── */
+  .glass {
+    background: var(--glass);
+    backdrop-filter: var(--blur);
+    -webkit-backdrop-filter: var(--blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    padding: 0 2.5rem;
+    height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(7,19,15,0.55);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    border-bottom: 1px solid rgba(62,207,178,0.12);
+  }
+
+  .nav-logo {
+    font-family: 'Cinzel', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--teal);
+    letter-spacing: 0.08em;
+    text-shadow: 0 0 18px rgba(62,207,178,0.5);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: var(--ivory-dim);
+    text-decoration: none;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    transition: color 0.3s, text-shadow 0.3s;
+  }
+
+  .nav-links a:hover {
+    color: var(--teal);
+    text-shadow: 0 0 10px rgba(62,207,178,0.5);
+  }
+
+  .nav-cta {
+    padding: 0.48rem 1.5rem;
+    background: rgba(62,207,178,0.12);
+    border: 1px solid var(--teal-border);
+    border-radius: 50px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: var(--teal);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.35s;
+    backdrop-filter: blur(10px);
+    text-transform: uppercase;
+  }
+
+  .nav-cta:hover {
+    background: rgba(62,207,178,0.22);
+    box-shadow: 0 0 22px rgba(62,207,178,0.28);
+  }
+
+  /* ─── MAIN ─── */
+  main { position: relative; z-index: 1; }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 100px 2rem 5rem;
+    position: relative;
+  }
+
+  .logo-wrap {
+    margin-bottom: 2rem;
+    animation: logoReveal 1.6s ease forwards;
+  }
+
+  @keyframes logoReveal {
+    from { opacity: 0; transform: scale(0.75) translateY(-24px); filter: blur(12px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+  }
+
+  .hero-eyebrow {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 1.2rem;
+    animation: fadeUp 1s 0.4s ease both;
+    opacity: 0.85;
+  }
+
+  .hero-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(3.2rem, 8.5vw, 7.5rem);
+    font-weight: 900;
+    line-height: 1;
+    color: transparent;
+    background: linear-gradient(140deg, #f0ede6 0%, #a8e8da 38%, #3ecfb2 65%, #c8f0e8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    filter: drop-shadow(0 0 36px rgba(62,207,178,0.3));
+    animation: fadeUp 1s 0.6s ease both;
+    margin-bottom: 0.4rem;
+  }
+
+  .hero-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1.2rem, 3vw, 1.9rem);
+    font-weight: 300;
+    color: var(--ivory-faint);
+    letter-spacing: 0.2em;
+    margin-bottom: 2.5rem;
+    animation: fadeUp 1s 0.8s ease both;
+  }
+
+  .hero-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    font-weight: 300;
+    color: rgba(240,237,230,0.55);
+    max-width: 480px;
+    line-height: 2;
+    margin-bottom: 3rem;
+    animation: fadeUp 1s 1s ease both;
+  }
+
+  .hero-btns {
+    display: flex;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeUp 1s 1.2s ease both;
+  }
+
+  .btn-primary {
+    padding: 0.95rem 2.8rem;
+    background: linear-gradient(135deg, rgba(62,207,178,0.28), rgba(62,207,178,0.1));
+    border: 1px solid rgba(62,207,178,0.5);
+    border-radius: 50px;
+    color: var(--teal);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.4s;
+    backdrop-filter: blur(10px);
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, rgba(62,207,178,0.42), rgba(62,207,178,0.2));
+    box-shadow: 0 0 36px rgba(62,207,178,0.3), inset 0 0 20px rgba(62,207,178,0.06);
+    transform: translateY(-3px);
+  }
+
+  .btn-ghost {
+    padding: 0.95rem 2.8rem;
+    background: rgba(240,237,230,0.04);
+    border: 1px solid rgba(240,237,230,0.18);
+    border-radius: 50px;
+    color: var(--ivory-dim);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.4s;
+    backdrop-filter: blur(10px);
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-ghost:hover {
+    background: rgba(240,237,230,0.09);
+    color: var(--ivory);
+    transform: translateY(-3px);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0.35;
+    animation: fadeUp 1s 1.6s ease both;
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 52px;
+    background: linear-gradient(to bottom, transparent, var(--teal), transparent);
+    animation: scrollPulse 2.2s ease infinite;
+  }
+
+  @keyframes scrollPulse {
+    0%,100% { opacity: 0.3; transform: scaleY(1); }
+    50%      { opacity: 0.9; transform: scaleY(1.25); }
+  }
+
+  /* ─── SECTIONS ─── */
+  section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 3.5rem;
+  }
+
+  .section-eyebrow {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: var(--teal);
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.9rem;
+    opacity: 0.8;
+  }
+
+  .section-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 700;
+    color: transparent;
+    background: linear-gradient(140deg, #f0ede6, #a8e8da, #3ecfb2);
+    -webkit-background-clip: text;
+    background-clip: text;
+    line-height: 1.2;
+    filter: drop-shadow(0 0 12px rgba(62,207,178,0.2));
+  }
+
+  .section-divider {
+    width: 70px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--teal), transparent);
+    margin: 1.2rem auto;
+  }
+
+  /* ─── MARQUEE ─── */
+  .specials-banner {
+    background: rgba(7,19,15,0.45);
+    backdrop-filter: blur(14px);
+    border-top: 1px solid rgba(62,207,178,0.1);
+    border-bottom: 1px solid rgba(62,207,178,0.1);
+    padding: 0.95rem 2rem;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    margin-top: 68px;
+  }
+
+  .marquee-track {
+    display: flex;
+    gap: 4rem;
+    animation: marquee 32s linear infinite;
+    white-space: nowrap;
+  }
+
+  .marquee-item {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 400;
+    color: var(--teal);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    opacity: 0.65;
+  }
+
+  .marquee-sep { color: rgba(62,207,178,0.3); }
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  /* ─── STATS ─── */
+  .stats-strip {
+    background: rgba(7,19,15,0.4);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(62,207,178,0.1);
+    border-bottom: 1px solid rgba(62,207,178,0.1);
+    padding: 2.2rem 0;
+  }
+
+  .stats-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+
+  .stat { text-align: center; }
+
+  .stat-num {
+    font-family: 'Cinzel', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--teal);
+    display: block;
+    filter: drop-shadow(0 0 12px rgba(62,207,178,0.4));
+  }
+
+  .stat-label {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 300;
+    color: var(--ivory-faint);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    display: block;
+    margin-top: 0.3rem;
+  }
+
+  /* ─── PRODUCT GRID ─── */
+  .products-wrap { padding: 5rem 0; }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.8rem;
+  }
+
+  .product-card {
+    background: rgba(7,19,15,0.5);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(62,207,178,0.12);
+    border-radius: 24px;
+    overflow: hidden;
+    transition: transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275), box-shadow 0.4s, border-color 0.4s;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .product-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+    background: linear-gradient(135deg, rgba(62,207,178,0.07) 0%, transparent 55%);
+    opacity: 0;
+    transition: opacity 0.4s;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .product-card:hover {
+    transform: translateY(-10px) scale(1.01);
+    box-shadow:
+      0 30px 60px rgba(0,0,0,0.5),
+      0 0 40px rgba(62,207,178,0.1),
+      inset 0 1px 0 rgba(62,207,178,0.15);
+    border-color: rgba(62,207,178,0.32);
+  }
+
+  .product-card:hover::before { opacity: 1; }
+
+  .product-img-wrap {
+    width: 100%;
+    height: 220px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .product-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+    filter: brightness(0.78) saturate(0.85);
+  }
+
+  .product-card:hover .product-img-wrap img {
+    transform: scale(1.08);
+    filter: brightness(0.92) saturate(1.05);
+  }
+
+  .product-img-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 38%, rgba(7,19,15,0.88) 100%);
+  }
+
+  .product-badge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: rgba(62,207,178,0.18);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(62,207,178,0.35);
+    border-radius: 50px;
+    padding: 0.28rem 0.9rem;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    color: var(--teal);
+  }
+
+  .product-body {
+    padding: 1.5rem 1.6rem 1.8rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .product-category {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 300;
+    color: rgba(62,207,178,0.55);
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .product-name {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--ivory);
+    margin-bottom: 0.6rem;
+    line-height: 1.3;
+  }
+
+  .product-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    font-weight: 300;
+    color: rgba(240,237,230,0.5);
+    line-height: 1.8;
+    margin-bottom: 1.4rem;
+  }
+
+  .product-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .product-price {
+    font-family: 'Cinzel', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--teal);
+    filter: drop-shadow(0 0 8px rgba(62,207,178,0.35));
+  }
+
+  .product-price small {
+    font-size: 0.72rem;
+    color: rgba(62,207,178,0.45);
+    font-weight: 400;
+  }
+
+  /* Reserve table btn on cards */
+  .product-reserve {
+    padding: 0.5rem 1.2rem;
+    background: rgba(62,207,178,0.12);
+    border: 1px solid rgba(62,207,178,0.35);
+    border-radius: 50px;
+    color: var(--teal);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+    white-space: nowrap;
+    backdrop-filter: blur(6px);
+    text-decoration: none;
+  }
+
+  .product-reserve:hover {
+    background: rgba(62,207,178,0.22);
+    box-shadow: 0 0 15px rgba(62,207,178,0.22);
+  }
+
+  /* ─── ABOUT ─── */
+  .about-glass {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+    background: rgba(7,19,15,0.5);
+    backdrop-filter: blur(22px);
+    border: 1px solid rgba(62,207,178,0.1);
+    border-radius: 28px;
+    padding: 3.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .about-glass::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: conic-gradient(from 0deg, transparent, rgba(62,207,178,0.03), transparent 60%);
+    animation: rotate 24s linear infinite;
+    pointer-events: none;
+  }
+
+  @keyframes rotate { to { transform: rotate(360deg); } }
+
+  .about-title {
+    font-family: 'Cinzel', serif;
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: transparent;
+    background: linear-gradient(140deg, #f0ede6, #3ecfb2);
+    -webkit-background-clip: text;
+    background-clip: text;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+  }
+
+  .about-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.08rem;
+    font-weight: 300;
+    color: rgba(240,237,230,0.62);
+    line-height: 2;
+    margin-bottom: 1.2rem;
+  }
+
+  .about-highlight {
+    font-style: italic;
+    color: rgba(62,207,178,0.7);
+  }
+
+  .about-visual {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .about-feat {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    background: rgba(62,207,178,0.04);
+    border: 1px solid rgba(62,207,178,0.1);
+    border-radius: 14px;
+    padding: 1.2rem 1.4rem;
+    backdrop-filter: blur(8px);
+    transition: border-color 0.3s, background 0.3s;
+  }
+
+  .about-feat:hover {
+    border-color: rgba(62,207,178,0.28);
+    background: rgba(62,207,178,0.07);
+  }
+
+  .feat-icon {
+    font-size: 1.7rem;
+    width: 46px; height: 46px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 8px rgba(62,207,178,0.35));
+  }
+
+  .feat-info h4 {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--teal);
+    margin-bottom: 0.22rem;
+  }
+
+  .feat-info p {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 300;
+    color: var(--ivory-faint);
+    line-height: 1.5;
+  }
+
+  /* ─── TESTIMONIALS ─── */
+  .testimonials { padding: 5rem 0; }
+
+  .testimonial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .testimonial-card {
+    background: rgba(7,19,15,0.48);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(62,207,178,0.1);
+    border-radius: 20px;
+    padding: 2rem;
+    position: relative;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+
+  .testimonial-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(62,207,178,0.25);
+  }
+
+  .testimonial-quote {
+    font-family: 'Cinzel', serif;
+    font-size: 3.5rem;
+    color: rgba(62,207,178,0.18);
+    line-height: 0.5;
+    margin-bottom: 1rem;
+  }
+
+  .testimonial-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1rem;
+    font-weight: 300;
+    color: rgba(240,237,230,0.62);
+    line-height: 1.85;
+    margin-bottom: 1.5rem;
+  }
+
+  .testimonial-stars {
+    font-size: 0.82rem;
+    color: var(--teal);
+    margin-bottom: 0.8rem;
+    letter-spacing: 0.1em;
+  }
+
+  .testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .author-avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(62,207,178,0.25), rgba(10,60,45,0.4));
+    border: 1px solid rgba(62,207,178,0.28);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    color: var(--teal);
+  }
+
+  .author-name {
+    font-family: 'Cinzel', serif;
+    font-size: 0.82rem;
+    color: var(--teal);
+    display: block;
+  }
+
+  .author-sub {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 300;
+    color: var(--ivory-faint);
+  }
+
+  /* ─── VISIT ─── */
+  .visit-glass {
+    background: rgba(7,19,15,0.5);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(62,207,178,0.1);
+    border-radius: 28px;
+    padding: 3.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2rem;
+    text-align: center;
+  }
+
+  .visit-item h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--teal);
+    margin-bottom: 0.9rem;
+    letter-spacing: 0.05em;
+  }
+
+  .visit-item p, .visit-item address {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    font-weight: 300;
+    color: var(--ivory-faint);
+    line-height: 2;
+  }
+
+  .visit-divider {
+    width: 1px;
+    background: rgba(62,207,178,0.1);
+    align-self: stretch;
+  }
+
+  /* ─── RESERVE SECTION ─── */
+  .reserve-section {
+    padding: 4rem 2rem 6rem;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .reserve-card {
+    background: rgba(7,19,15,0.55);
+    backdrop-filter: blur(28px);
+    border: 1px solid rgba(62,207,178,0.18);
+    border-radius: 28px;
+    padding: 3.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .reserve-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 28px;
+    background: linear-gradient(135deg, rgba(62,207,178,0.05) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .reserve-title {
+    font-family: 'Cinzel', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: transparent;
+    background: linear-gradient(140deg, #f0ede6, #3ecfb2);
+    -webkit-background-clip: text;
+    background-clip: text;
+    margin-bottom: 1rem;
+  }
+
+  .reserve-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    font-weight: 300;
+    color: var(--ivory-faint);
+    line-height: 2;
+    margin-bottom: 2.5rem;
+  }
+
+  .reserve-btn {
+    display: inline-block;
+    padding: 1.1rem 3.2rem;
+    background: linear-gradient(135deg, rgba(62,207,178,0.32), rgba(62,207,178,0.12));
+    border: 1px solid rgba(62,207,178,0.55);
+    border-radius: 50px;
+    color: var(--teal);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.4s;
+    text-decoration: none;
+    backdrop-filter: blur(10px);
+  }
+
+  .reserve-btn:hover {
+    background: linear-gradient(135deg, rgba(62,207,178,0.48), rgba(62,207,178,0.22));
+    box-shadow: 0 0 44px rgba(62,207,178,0.3), 0 0 80px rgba(62,207,178,0.1);
+    transform: translateY(-3px);
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    padding: 3rem 2rem;
+    background: rgba(0,0,0,0.35);
+    border-top: 1px solid rgba(62,207,178,0.1);
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .footer-logo {
+    font-family: 'Cinzel', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--teal);
+    margin-bottom: 0.8rem;
+    filter: drop-shadow(0 0 12px rgba(62,207,178,0.3));
+  }
+
+  .footer-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    font-weight: 300;
+    color: rgba(240,237,230,0.3);
+    margin-bottom: 2rem;
+  }
+
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .footer-links a {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 300;
+    color: rgba(240,237,230,0.35);
+    text-decoration: none;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+
+  .footer-links a:hover { color: var(--teal); }
+
+  .footer-copy {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.74rem;
+    font-weight: 300;
+    color: rgba(240,237,230,0.18);
+  }
+
+  /* ─── FULLWIDTH ─── */
+  .fullwidth { max-width: none; }
+  .section-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  /* ─── REVEAL ─── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.85s ease, transform 0.85s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ─── RESPONSIVE — MOBILE FIRST ─── */
+  @media (max-width: 768px) {
+    /* Nav */
+    nav { padding: 0 1.2rem; height: 60px; }
+    .nav-links { display: none; }
+    .nav-logo { font-size: 1rem; }
+    .nav-cta { padding: 0.4rem 1rem; font-size: 0.72rem; }
+
+    /* Marquee */
+    .specials-banner { margin-top: 60px; padding: 0.7rem 1rem; }
+
+    /* Hero */
+    .hero { padding: 80px 1.2rem 4rem; min-height: 100svh; }
+    .logo-wrap svg { width: 130px; height: 130px; }
+    .logo-wrap { margin-bottom: 1.2rem; }
+    .hero-eyebrow { font-size: 0.68rem; letter-spacing: 0.3em; }
+    .hero-title { font-size: clamp(2.4rem, 11vw, 4rem); }
+    .hero-subtitle { font-size: 1rem; letter-spacing: 0.1em; }
+    .hero-desc { font-size: 0.95rem; line-height: 1.85; margin-bottom: 2rem; max-width: 100%; }
+    .hero-btns { gap: 0.8rem; }
+    .btn-primary, .btn-ghost { padding: 0.8rem 1.8rem; font-size: 0.78rem; width: 100%; text-align: center; }
+
+    /* Stats */
+    .stats-inner { gap: 1.2rem; padding: 0 1.2rem; }
+    .stat-num { font-size: 1.9rem; }
+    .stat-label { font-size: 0.68rem; }
+
+    /* Sections */
+    section { padding: 3rem 1.2rem; }
+    .section-title { font-size: clamp(1.6rem, 7vw, 2.4rem); }
+    .section-eyebrow { font-size: 0.66rem; letter-spacing: 0.3em; }
+
+    /* Product grid — single column */
+    .products-wrap { padding: 3rem 1.2rem; }
+    .product-grid { grid-template-columns: 1fr; gap: 1.2rem; }
+    .product-card { border-radius: 18px; }
+    .product-img-wrap { height: 190px; }
+    .product-name { font-size: 1rem; }
+    .product-desc { font-size: 0.88rem; }
+    .product-price { font-size: 1.2rem; }
+    .product-reserve { font-size: 0.7rem; padding: 0.44rem 0.9rem; }
+    .product-body { padding: 1.2rem 1.2rem 1.4rem; }
+
+    /* About */
+    .about-glass { grid-template-columns: 1fr; padding: 1.6rem; gap: 1.5rem; border-radius: 20px; }
+    .about-title { font-size: 1.6rem; }
+    .about-text { font-size: 0.95rem; }
+    .feat-icon { font-size: 1.4rem; width: 38px; height: 38px; }
+    .feat-info h4 { font-size: 0.8rem; }
+
+    /* Testimonials */
+    .testimonials { padding: 3rem 1.2rem; }
+    .testimonial-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .testimonial-card { padding: 1.5rem; border-radius: 16px; }
+    .testimonial-text { font-size: 0.9rem; }
+
+    /* Reserve */
+    .reserve-section { padding: 2rem 1.2rem 4rem; }
+    .reserve-card { padding: 2rem 1.4rem; border-radius: 20px; }
+    .reserve-title { font-size: 1.5rem; }
+    .reserve-desc { font-size: 0.95rem; }
+    .reserve-btn { padding: 0.9rem 2rem; font-size: 0.78rem; display: block; text-align: center; }
+
+    /* Visit */
+    .visit-glass { grid-template-columns: 1fr; padding: 1.8rem; gap: 1.5rem; border-radius: 20px; text-align: left; }
+    .visit-divider { display: none; }
+    .visit-item h3 { font-size: 1rem; }
+
+    /* Footer */
+    footer { padding: 2rem 1.2rem; }
+    .footer-logo { font-size: 1.1rem; }
+    .footer-links { gap: 1.2rem; }
+    .footer-links a { font-size: 0.7rem; }
+
+    /* Orbs — scale down so they don't overpower small screens */
+    .orb1 { width: 280px; height: 280px; }
+    .orb2 { width: 200px; height: 200px; }
+    .orb3 { width: 300px; height: 180px; }
+    .orb4 { width: 140px; height: 140px; }
+    .orb5 { width: 160px; height: 160px; }
+  }
+
+  @media (max-width: 400px) {
+    .hero-title { font-size: 2.2rem; }
+    .product-footer { flex-direction: column; align-items: flex-start; gap: 0.7rem; }
+    .product-reserve { width: 100%; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── BACKGROUND ── -->
+<div class="bg-scene">
+  <div class="bg-img"></div>
+  <div class="bg-overlay"></div>
+  <div class="bg-orb orb1"></div>
+  <div class="bg-orb orb2"></div>
+  <div class="bg-orb orb3"></div>
+  <div class="bg-orb orb4"></div>
+  <div class="bg-orb orb5"></div>
+  <div class="bg-grain"></div>
+  <div class="bg-particles" id="particles"></div>
+</div>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-logo">✦ Maddy's</div>
+  <ul class="nav-links">
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#about">Story</a></li>
+    <li><a href="#visit">Visit</a></li>
+  </ul>
+  <a href="#reserve" class="nav-cta">Reserve a Table</a>
+</nav>
+
+<!-- ── MARQUEE ── -->
+<div class="specials-banner">
+  <div class="marquee-track">
+    <span class="marquee-item">Artisan Coffee Rituals</span>
+    <span class="marquee-sep">✦</span>
+    <span class="marquee-item">Reserve Your Table</span>
+    <span class="marquee-sep">✦</span>
+    <span class="marquee-item">Seasonal Brews</span>
+    <span class="marquee-sep">✦</span>
+    <span class="marquee-item">Open 7am — Midnight</span>
+    <span class="marquee-sep">✦</span>
+    <span class="marquee-item">Handcrafted Pastries</span>
+    <span class="marquee-sep">✦</span>
+    <span class="marquee-item">Artisan Coffee Rituals</span>
+    <span class="marquee-sep">✦</span>
+    <span class="marquee-item">Reserve Your Table</span>
+    <span class="marquee-sep">✦</span>
+    <span class="marquee-item">Seasonal Brews</span>
+    <span class="marquee-sep">✦</span>
+    <span class="marquee-item">Open 7am — Midnight</span>
+    <span class="marquee-sep">✦</span>
+    <span class="marquee-item">Handcrafted Pastries</span>
+    <span class="marquee-sep">✦</span>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<main>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="logo-wrap">
+      <svg width="180" height="180" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="logoGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="rgba(62,207,178,0.22)"/>
+            <stop offset="100%" stop-color="transparent"/>
+          </radialGradient>
+          <linearGradient id="tealGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#f0ede6"/>
+            <stop offset="45%" stop-color="#3ecfb2"/>
+            <stop offset="100%" stop-color="#1a9e88"/>
+          </linearGradient>
+          <filter id="softGlow">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <circle cx="100" cy="100" r="95" fill="url(#logoGlow)"/>
+        <circle cx="100" cy="100" r="90" fill="none" stroke="url(#tealGrad)" stroke-width="1" opacity="0.4"/>
+        <circle cx="100" cy="100" r="84" fill="none" stroke="url(#tealGrad)" stroke-width="0.5" opacity="0.2"/>
+        <circle cx="100" cy="100" r="82" fill="rgba(7,19,15,0.55)" stroke="rgba(62,207,178,0.25)" stroke-width="0.5"/>
+        <!-- 8-point star outer -->
+        <g fill="url(#tealGrad)" filter="url(#softGlow)" opacity="0.55">
+          <polygon points="100,25 103,70 100,30 97,70"/>
+          <polygon points="100,175 103,130 100,170 97,130"/>
+          <polygon points="25,100 70,103 30,100 70,97"/>
+          <polygon points="175,100 130,103 170,100 130,97"/>
+          <polygon points="47,47 78,82 50,50 82,78"/>
+          <polygon points="153,153 122,118 150,150 118,122"/>
+          <polygon points="153,47 118,82 150,50 122,78"/>
+          <polygon points="47,153 82,118 50,150 78,122"/>
+        </g>
+        <!-- Coffee cup -->
+        <g transform="translate(66,56)">
+          <path d="M18,0 Q16,-5 18,-10 Q20,-15 18,-20" fill="none" stroke="url(#tealGrad)" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+          <path d="M26,0 Q24,-6 26,-12 Q28,-18 26,-24" fill="none" stroke="url(#tealGrad)" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+          <path d="M34,0 Q32,-5 34,-10 Q36,-15 34,-20" fill="none" stroke="url(#tealGrad)" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+          <path d="M4,4 L8,52 Q26,56 44,52 L48,4 Z" fill="rgba(62,207,178,0.12)" stroke="url(#tealGrad)" stroke-width="1.5"/>
+          <path d="M48,14 Q62,18 62,30 Q62,42 48,42" fill="none" stroke="url(#tealGrad)" stroke-width="1.5"/>
+          <ellipse cx="26" cy="4" rx="22" ry="4" fill="none" stroke="url(#tealGrad)" stroke-width="1.5"/>
+          <ellipse cx="26" cy="54" rx="28" ry="5" fill="rgba(62,207,178,0.08)" stroke="url(#tealGrad)" stroke-width="1"/>
+          <ellipse cx="26" cy="8" rx="18" ry="3" fill="rgba(62,207,178,0.15)"/>
+          <path d="M20,8 Q26,5 32,8" fill="none" stroke="rgba(240,237,230,0.4)" stroke-width="0.8"/>
+        </g>
+        <g fill="url(#tealGrad)" opacity="0.45">
+          <circle cx="100" cy="28" r="1.5"/>
+          <circle cx="100" cy="172" r="1.5"/>
+          <circle cx="28" cy="100" r="1.5"/>
+          <circle cx="172" cy="100" r="1.5"/>
+        </g>
+      </svg>
+    </div>
+
+    <p class="hero-eyebrow">Est. 2019 &nbsp;✦&nbsp; New York City</p>
+    <h1 class="hero-title">Maddy's Café</h1>
+    <p class="hero-subtitle">Where Every Sip Tells a Story</p>
+    <p class="hero-desc">Step into a sanctuary of extraordinary taste. Every pour, every bite — a quiet ritual crafted for the discerning soul.</p>
+    <div class="hero-btns">
+      <a href="#reserve" class="btn-primary">Reserve a Table</a>
+      <a href="#menu" class="btn-ghost">Explore Menu</a>
+    </div>
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-strip">
+    <div class="stats-inner">
+      <div class="stat">
+        <span class="stat-num">12K+</span>
+        <span class="stat-label">Guests Welcomed</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">48</span>
+        <span class="stat-label">Curated Brews</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">5★</span>
+        <span class="stat-label">Beloved Rating</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">7</span>
+        <span class="stat-label">Years of Craft</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MENU -->
+  <section id="menu" class="products-wrap">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">✦ Crafted With Care ✦</span>
+      <h2 class="section-title">Our Menu</h2>
+      <div class="section-divider"></div>
+    </div>
+
+    <div class="product-grid">
+
+      <!-- CARD 1 -->
+      <div class="product-card reveal">
+        <div class="product-img-wrap">
+          <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=600&q=80" alt="Midnight Espresso"/>
+          <div class="product-img-overlay"></div>
+          <span class="product-badge">★ Signature</span>
+        </div>
+        <div class="product-body">
+          <span class="product-category">☕ Espresso</span>
+          <h3 class="product-name">Midnight Espresso</h3>
+          <p class="product-desc">Triple-shot obsidian darkness with notes of dark chocolate, charred oak, and a whisper of vanilla.</p>
+          <div class="product-footer">
+            <div class="product-price">₹550 <small>/ cup</small></div>
+            <a href="#reserve" class="product-reserve">Reserve Table</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 2 -->
+      <div class="product-card reveal">
+        <div class="product-img-wrap">
+          <img src="https://images.unsplash.com/photo-1534778101976-62847782c213?w=600&q=80" alt="Teal Mist Latte"/>
+          <div class="product-img-overlay"></div>
+          <span class="product-badge">🔥 Popular</span>
+        </div>
+        <div class="product-body">
+          <span class="product-category">🌿 Signature Latte</span>
+          <h3 class="product-name">Teal Mist Latte</h3>
+          <p class="product-desc">Velvet espresso with butterfly pea bloom, oat cream and a swirl of honey — beauty in every sip.</p>
+          <div class="product-footer">
+            <div class="product-price">₹625 <small>/ cup</small></div>
+            <a href="#reserve" class="product-reserve">Reserve Table</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 3 -->
+      <div class="product-card reveal">
+        <div class="product-img-wrap">
+          <img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=600&q=80" alt="Ivory Croissant"/>
+          <div class="product-img-overlay"></div>
+          <span class="product-badge">🥐 Baked Daily</span>
+        </div>
+        <div class="product-body">
+          <span class="product-category">🥐 Pastry</span>
+          <h3 class="product-name">Ivory Butter Croissant</h3>
+          <p class="product-desc">Gossamer flaky layers, stone-ground almond cream, and a shimmer of fleur de sel caramel.</p>
+          <div class="product-footer">
+            <div class="product-price">₹440 <small>/ each</small></div>
+            <a href="#reserve" class="product-reserve">Reserve Table</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 4 -->
+      <div class="product-card reveal">
+        <div class="product-img-wrap">
+          <img src="https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=600&q=80" alt="Jade Matcha"/>
+          <div class="product-img-overlay"></div>
+          <span class="product-badge">🍵 Vegan</span>
+        </div>
+        <div class="product-body">
+          <span class="product-category">🍵 Ceremonial Matcha</span>
+          <h3 class="product-name">Jade Ceremonial Matcha</h3>
+          <p class="product-desc">Ceremonial grade matcha whipped with oat silk and a ribbon of dark forest honey. Ancient. Grounding.</p>
+          <div class="product-footer">
+            <div class="product-price">₹625 <small>/ cup</small></div>
+            <a href="#reserve" class="product-reserve">Reserve Table</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 5 -->
+      <div class="product-card reveal">
+        <div class="product-img-wrap">
+          <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&q=80" alt="Dark Forest Cake"/>
+          <div class="product-img-overlay"></div>
+          <span class="product-badge">🎂 Chef's Pick</span>
+        </div>
+        <div class="product-body">
+          <span class="product-category">🍰 Dessert</span>
+          <h3 class="product-name">Dark Forest Slice</h3>
+          <p class="product-desc">Layers of deep chocolate sponge, wild cherry compote, and midnight cream beneath a glossy shadow glaze.</p>
+          <div class="product-footer">
+            <div class="product-price">₹740 <small>/ slice</small></div>
+            <a href="#reserve" class="product-reserve">Reserve Table</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARD 6 -->
+      <div class="product-card reveal">
+        <div class="product-img-wrap">
+          <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=600&q=80" alt="Cold Brew"/>
+          <div class="product-img-overlay"></div>
+          <span class="product-badge">❄️ Cold</span>
+        </div>
+        <div class="product-body">
+          <span class="product-category">🧊 Cold Brew</span>
+          <h3 class="product-name">Still Waters Cold Brew</h3>
+          <p class="product-desc">18-hour steeped obsidian cold brew over hand-cut ice, with charred cinnamon and a trace of vanilla spirit.</p>
+          <div class="product-footer">
+            <div class="product-price">₹665 <small>/ glass</small></div>
+            <a href="#reserve" class="product-reserve">Reserve Table</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="about-glass reveal">
+      <div>
+        <h2 class="about-title">A Story Born in Stillness</h2>
+        <p class="about-text">Maddy's Café was founded in 2019 by Madeleine Voss — a former barista turned flavour alchemist who believed coffee should feel like a private ritual, intimate and transformative.</p>
+        <p class="about-text"><span class="about-highlight">"I wanted a place where the coffee is as complex as the people drinking it."</span></p>
+        <p class="about-text">Every recipe is composed with intention. We source beans from highland Ethiopia, misty Colombian slopes, and volcanic Indonesian isles, roasting them in small batches for maximum depth.</p>
+      </div>
+      <div class="about-visual">
+        <div class="about-feat">
+          <div class="feat-icon">🌿</div>
+          <div class="feat-info">
+            <h4>Single-Origin Sourced</h4>
+            <p>Direct trade from 12 remote farms across 6 countries.</p>
+          </div>
+        </div>
+        <div class="about-feat">
+          <div class="feat-icon">☕</div>
+          <div class="feat-info">
+            <h4>Small-Batch Roasted</h4>
+            <p>Precision roasting for optimal body, clarity, and aroma.</p>
+          </div>
+        </div>
+        <div class="about-feat">
+          <div class="feat-icon">🕯️</div>
+          <div class="feat-info">
+            <h4>Candlelit Atmosphere</h4>
+            <p>No harsh lights. Warm ambience crafted for conversation.</p>
+          </div>
+        </div>
+        <div class="about-feat">
+          <div class="feat-icon">♻️</div>
+          <div class="feat-info">
+            <h4>Zero-Waste Kitchen</h4>
+            <p>All packaging is 100% compostable. A commitment we keep.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <div class="testimonials fullwidth">
+    <div class="section-inner">
+      <div class="section-header reveal">
+        <span class="section-eyebrow">✦ Guest Voices ✦</span>
+        <h2 class="section-title">What People Say</h2>
+        <div class="section-divider"></div>
+      </div>
+      <div class="testimonial-grid">
+        <div class="testimonial-card reveal">
+          <div class="testimonial-quote">"</div>
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">The Midnight Espresso cast a spell on me. I return every morning. The atmosphere is genuinely otherworldly — like stepping inside a dream.</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">EV</div>
+            <div>
+              <span class="author-name">Elara V.</span>
+              <span class="author-sub">Loyal Patron, 3 years</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card reveal">
+          <div class="testimonial-quote">"</div>
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">The Teal Mist Latte is unlike anything I've tasted. Beautiful presentation, extraordinary flavour. This café deserves more than five stars.</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">JM</div>
+            <div>
+              <span class="author-name">Jonas M.</span>
+              <span class="author-sub">Food Critic, The Dark Roast</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card reveal">
+          <div class="testimonial-quote">"</div>
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">Walking into Maddy's feels like entering another world. The Dark Forest Cake is genuinely haunting — in the best way. My weekly ritual now.</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">SR</div>
+            <div>
+              <span class="author-name">Sofia R.</span>
+              <span class="author-sub">Dessert Devotee</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESERVE -->
+  <div id="reserve" class="reserve-section reveal">
+    <div class="reserve-card">
+      <span class="section-eyebrow" style="margin-bottom:1rem;display:block;">✦ Secure Your Seat ✦</span>
+      <h2 class="reserve-title">Reserve a Table</h2>
+      <p class="reserve-desc">Join us for an evening of curated flavours and quiet wonder. Weekend reservations are especially coveted — book early to secure your spot in our inner sanctum.</p>
+      <a href="tel:+16665550013" class="reserve-btn">Reserve Now &nbsp;✦</a>
+      <p style="margin-top:1.5rem;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.88rem;color:rgba(62,207,178,0.45);">Or call us at +1 (666) 555-0013 &nbsp;·&nbsp; hello@maddyscafe.com</p>
+    </div>
+  </div>
+
+  <!-- VISIT -->
+  <section id="visit">
+    <div class="section-header reveal">
+      <span class="section-eyebrow">✦ Find Us ✦</span>
+      <h2 class="section-title">Come Find Us</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="visit-glass reveal">
+      <div class="visit-item">
+        <h3>📍 Location</h3>
+        <address>
+          13 Hollow Bone Lane<br>
+          The Old Quarter<br>
+          New York, NY 10001
+        </address>
+      </div>
+      <div class="visit-divider"></div>
+      <div class="visit-item">
+        <h3>🕯️ Hours</h3>
+        <p>
+          Mon — Fri: 7am — Midnight<br>
+          Saturday: 8am — 1am<br>
+          Sunday: 9am — 11pm<br>
+          <em style="color:rgba(62,207,178,0.35);font-size:0.8rem;">We are always here for you.</em>
+        </p>
+      </div>
+      <div class="visit-divider"></div>
+      <div class="visit-item">
+        <h3>📞 Contact</h3>
+        <p>
+          +1 (666) 555-0013<br>
+          hello@maddyscafe.com<br>
+          <br>
+          <em style="font-size:0.82rem;">Weekend table reservations available — call ahead.</em>
+        </p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">✦ Maddy's Café ✦</div>
+  <p class="footer-tagline">Where Every Sip Tells a Story — Est. 2019</p>
+  <div class="footer-links">
+    <a href="#menu">Menu</a>
+    <a href="#about">Our Story</a>
+    <a href="#visit">Visit</a>
+    <a href="#">Instagram</a>
+    <a href="#reserve">Reservations</a>
+  </div>
+  <p class="footer-copy">© 2026 Maddy's Café. All rights reserved. Crafted with care in New York City.</p>
+</footer>
+
+<script>
+  // ── Particles (ivory + teal specks rising upward) ──
+  const pc = document.getElementById('particles');
+  const colors = [
+    'rgba(240,237,230,0.55)',
+    'rgba(240,237,230,0.4)',
+    'rgba(62,207,178,0.5)',
+    'rgba(62,207,178,0.35)',
+    'rgba(168,232,218,0.4)',
+  ];
+  for (let i = 0; i < 55; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = 1 + Math.random() * 2.5;
+    const drift = (Math.random() - 0.5) * 60;
+    p.style.cssText = `
+      left: ${Math.random() * 100}%;
+      animation-duration: ${10 + Math.random() * 22}s;
+      animation-delay: ${Math.random() * 15}s;
+      width: ${size}px;
+      height: ${size}px;
+      background: ${colors[Math.floor(Math.random() * colors.length)]};
+      --drift: ${drift}px;
+    `;
+    pc.appendChild(p);
+  }
+
+  // ── Scroll reveal ──
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+  revealEls.forEach(el => observer.observe(el));
+
+  // ── Subtle orb parallax on scroll ──
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    document.querySelectorAll('.bg-orb').forEach((o, i) => {
+      o.style.transform = `translateY(${y * (0.04 + i * 0.015)}px)`;
+    });
+  }, { passive: true });
+</script>
+</body>
+</html>
